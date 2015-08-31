@@ -3,7 +3,7 @@
 
     <groupId>br.ufsc.bridge</groupId>
 	<artifactId>metafy</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
 
 	<dependencies>
 	
@@ -48,7 +48,7 @@
         <connection>scm:git:git@github.com:bridge-ufsc/metafy.git</connection>
         <url>scm:git:git@github.com:bridge-ufsc/metafy.git</url>
         <developerConnection>scm:git:git@github.com:bridge-ufsc/metafy.git</developerConnection>
-        <tag>0.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
