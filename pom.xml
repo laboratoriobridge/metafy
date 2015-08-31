@@ -1,18 +1,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>br.ufsc.bridge</groupId>
-        <artifactId>typescript.server</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
 
+    <groupId>br.ufsc.bridge</groupId>
 	<artifactId>metafy</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
 	<dependencies>
 	
 	</dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>Internal Releases</name>
+            <url>http://nexus.bridge.ufsc.br/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://nexus.bridge.ufsc.br/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 	<build>
         <plugins>
@@ -28,5 +36,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <scm>
+        <connection>scm:git:git@github.com:bridge-ufsc/metafy.git</connection>
+        <url>scm:git:git@github.com:bridge-ufsc/metafy.git</url>
+        <developerConnection>scm:git:git@github.com:bridge-ufsc/metafy.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
 </project>
