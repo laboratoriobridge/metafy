@@ -3,9 +3,9 @@ package br.ufsc.bridge.metafy.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
+import br.ufsc.bridge.metafy.FakeTypeElement;
 import br.ufsc.bridge.metafy.MetafyConstants;
 
 public class MetafyClass {
@@ -28,7 +28,13 @@ public class MetafyClass {
 		this.attributes = new ArrayList<VariableElement>();
 	}
 
-	public void importType(TypeElement element) {
+	public void importType(String element) {
+		if (!this.imports.contains(element)) {
+			this.imports.add(element);
+		}
+	}
+
+	public void importType(FakeTypeElement element) {
 		if (!this.imports.contains(element.getQualifiedName().toString())) {
 			this.imports.add(element.getQualifiedName().toString());
 		}

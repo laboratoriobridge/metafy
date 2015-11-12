@@ -5,12 +5,11 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.tools.JavaFileObject;
 
+import br.ufsc.bridge.metafy.FakeTypeElement;
 import br.ufsc.bridge.metafy.MetafyConstants;
-import br.ufsc.bridge.metafy.util.TypeUtil;
 
 public class MetafyClassSerializer {
 
@@ -33,7 +32,7 @@ public class MetafyClassSerializer {
 		pw.println();
 
 		for (VariableElement e : data.getChildForms()) {
-			TypeElement typeElement = TypeUtil.resolveVariableType(processingEnvironment, e);
+			FakeTypeElement typeElement = new FakeTypeElement(processingEnvironment, e.asType());
 			pw.println(String.format("import %s;",
 					typeElement.getQualifiedName().toString().replace(typeElement.getSimpleName(), MetafyConstants.PREFIX + typeElement.getSimpleName())));
 		}
@@ -65,7 +64,7 @@ public class MetafyClassSerializer {
 		pw.println();
 
 		for (VariableElement e : data.getChildForms()) {
-			TypeElement typeElement = TypeUtil.resolveVariableType(processingEnvironment, e);
+			FakeTypeElement typeElement = new FakeTypeElement(processingEnvironment, e.asType());
 			pw.println(String.format("\tprivate %s%s %s;", MetafyConstants.PREFIX, typeElement.getSimpleName().toString(), e.getSimpleName()));
 		}
 
@@ -91,7 +90,7 @@ public class MetafyClassSerializer {
 	}
 
 	private void generateConstantMethod(ProcessingEnvironment processingEnvironment, PrintWriter pw, VariableElement e) {
-		TypeElement typeElement = TypeUtil.resolveVariableType(processingEnvironment, e);
+		FakeTypeElement typeElement = new FakeTypeElement(processingEnvironment, e.asType());
 		pw.println(String.format("\tpublic %s%s %s(){", MetafyConstants.PREFIX, typeElement.getSimpleName(), e.getSimpleName()));
 		pw.println(String.format("\t\tif(%s == null){", e.getSimpleName()));
 		pw.println(String.format("\t\t\t%s = new %s%s(this, \"%s\");", e.getSimpleName(), MetafyConstants.PREFIX, typeElement.getSimpleName().toString(), e.getSimpleName()));
@@ -102,7 +101,7 @@ public class MetafyClassSerializer {
 
 	private void generateConstantAttribute(ProcessingEnvironment processingEnvironment, PrintWriter pw, VariableElement e) {
 		String fieldTypeName = e.asType().toString();
-		String simpleFieldTypeName = TypeUtil.resolveVariableType(processingEnvironment, e).getSimpleName().toString();
+		String simpleFieldTypeName = new FakeTypeElement(processingEnvironment, e.asType()).getSimpleName().toString();
 		String attrName = e.getSimpleName().toString();
 
 		if (this.isSet(fieldTypeName)) {
@@ -115,12 +114,9 @@ public class MetafyClassSerializer {
 			// TODO
 			pw.println(String.format("\t// attributo %s do tipo Map não suportado", attrName));
 		} else {
-			pw.println(String.format("\tpublic final MetaField<%s> %s = createField(%s.class, \"%s\");", simpleFieldTypeName, attrName,
-					simpleFieldTypeName,
-					attrName));
+			pw.println(String.format("\tpublic final MetaField<%s> %s = createField(%s.class, \"%s\");", simpleFieldTypeName, attrName, simpleFieldTypeName, attrName));
 		}
 	}
-
 
 	private boolean isSet(String qualifiedName) {
 		return qualifiedName.startsWith("java.util.Set");
