@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.tools.JavaFileObject;
 
 import br.ufsc.bridge.metafy.MetafyConstants;
@@ -114,13 +115,14 @@ public class MetafyClassSerializer {
 		} else if (this.isMap(fieldTypeName)) {
 			// TODO
 			pw.println(String.format("\t// attributo %s do tipo Map não suportado", attrName));
+		} else if (e.asType().getKind().equals(TypeKind.ARRAY)) {
+			pw.println(String.format("\tpublic final MetaField<%s[]> %s = createField(%s[].class, \"%s\");", simpleFieldTypeName, attrName, simpleFieldTypeName, attrName));
 		} else {
 			pw.println(String.format("\tpublic final MetaField<%s> %s = createField(%s.class, \"%s\");", simpleFieldTypeName, attrName,
 					simpleFieldTypeName,
 					attrName));
 		}
 	}
-
 
 	private boolean isSet(String qualifiedName) {
 		return qualifiedName.startsWith("java.util.Set");

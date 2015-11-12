@@ -53,7 +53,7 @@ public class MetafyProcessor extends AbstractProcessor {
 							if (attrTypeElement.getAnnotation(Metafy.class) != null) {
 								data.addChildForm(e);
 							} else {
-								data.importType((TypeElement) this.processingEnv.getTypeUtils().asElement(e.asType()));
+								data.importType(attrTypeElement);
 								data.addAttribute(e);
 							}
 						}
