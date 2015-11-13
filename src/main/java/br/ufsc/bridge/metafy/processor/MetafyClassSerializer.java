@@ -3,13 +3,13 @@ package br.ufsc.bridge.metafy.processor;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.VariableElement;
 import javax.tools.JavaFileObject;
 
 import br.ufsc.bridge.metafy.FakeTypeElement;
-import br.ufsc.bridge.metafy.MetafyConstants;
 
 public class MetafyClassSerializer {
 
@@ -31,10 +31,13 @@ public class MetafyClassSerializer {
 
 		pw.println();
 
-		for (VariableElement e : data.getChildForms()) {
-			FakeTypeElement typeElement = new FakeTypeElement(processingEnvironment, e.asType());
-			pw.println(String.format("import %s;",
-					typeElement.getQualifiedName().toString().replace(typeElement.getSimpleName(), MetafyConstants.PREFIX + typeElement.getSimpleName())));
+		Set<String> imports = new HashSet<>();
+		for (FakeTypeElement e : data.getFakeTypes()) {
+			String value = e.getImport();
+			if (value != null && !imports.contains(value)) {
+				pw.println(value);
+				imports.add(value);
+			}
 		}
 
 		pw.println();
@@ -63,22 +66,14 @@ public class MetafyClassSerializer {
 		pw.println(String.format("\t}"));
 		pw.println();
 
-		for (VariableElement e : data.getChildForms()) {
-			FakeTypeElement typeElement = new FakeTypeElement(processingEnvironment, e.asType());
-			pw.println(String.format("\tprivate %s%s %s;", MetafyConstants.PREFIX, typeElement.getSimpleName().toString(), e.getSimpleName()));
+		for (FakeTypeElement e : data.getFakeTypes()) {
+			e.writeAttribute(pw);
 		}
 
 		pw.println();
 
-		for (VariableElement e : data.getAttributes()) {
-			this.generateConstantAttribute(processingEnvironment, pw, e);
-		}
-
-		pw.println();
-
-		for (VariableElement e : data.getChildForms()) {
-			this.generateConstantMethod(processingEnvironment, pw, e);
-			pw.println();
+		for (FakeTypeElement e : data.getFakeTypes()) {
+			e.writeConstantMethod(pw);
 		}
 
 		pw.println("}");
@@ -88,46 +83,4 @@ public class MetafyClassSerializer {
 		pw.close();
 
 	}
-
-	private void generateConstantMethod(ProcessingEnvironment processingEnvironment, PrintWriter pw, VariableElement e) {
-		FakeTypeElement typeElement = new FakeTypeElement(processingEnvironment, e.asType());
-		pw.println(String.format("\tpublic %s%s %s(){", MetafyConstants.PREFIX, typeElement.getSimpleName(), e.getSimpleName()));
-		pw.println(String.format("\t\tif(%s == null){", e.getSimpleName()));
-		pw.println(String.format("\t\t\t%s = new %s%s(this, \"%s\");", e.getSimpleName(), MetafyConstants.PREFIX, typeElement.getSimpleName().toString(), e.getSimpleName()));
-		pw.println("\t\t}");
-		pw.println(String.format("\t\treturn %s;", e.getSimpleName()));
-		pw.println("\t}");
-	}
-
-	private void generateConstantAttribute(ProcessingEnvironment processingEnvironment, PrintWriter pw, VariableElement e) {
-		String fieldTypeName = e.asType().toString();
-		String simpleFieldTypeName = new FakeTypeElement(processingEnvironment, e.asType()).getSimpleName().toString();
-		String attrName = e.getSimpleName().toString();
-
-		if (this.isSet(fieldTypeName)) {
-			pw.println("\t@SuppressWarnings(\"unchecked\")");
-			pw.println(String.format("\tpublic final MetaSet<%s> %s = createSet(\"%s\");", simpleFieldTypeName, attrName, attrName));
-		} else if (this.isList(fieldTypeName)) {
-			pw.println("\t@SuppressWarnings(\"unchecked\")");
-			pw.println(String.format("\tpublic final <MetaList<%s> %s = createList(\"%s\");", simpleFieldTypeName, attrName, attrName));
-		} else if (this.isMap(fieldTypeName)) {
-			// TODO
-			pw.println(String.format("\t// attributo %s do tipo Map não suportado", attrName));
-		} else {
-			pw.println(String.format("\tpublic final MetaField<%s> %s = createField(%s.class, \"%s\");", simpleFieldTypeName, attrName, simpleFieldTypeName, attrName));
-		}
-	}
-
-	private boolean isSet(String qualifiedName) {
-		return qualifiedName.startsWith("java.util.Set");
-	}
-
-	private boolean isList(String qualifiedName) {
-		return qualifiedName.startsWith("java.util.List");
-	}
-
-	private boolean isMap(String qualifiedName) {
-		return qualifiedName.startsWith("java.util.Map");
-	}
-
 }

@@ -44,18 +44,12 @@ public class MetafyProcessor extends AbstractProcessor {
 						data = new MetafyClass(typeElement.getQualifiedName().toString());
 					}
 
-					data.importType(new FakeTypeElement(this.processingEnv.getElementUtils().getTypeElement(MetaField.class.getCanonicalName())));
-					data.importType(new FakeTypeElement(this.processingEnv.getElementUtils().getTypeElement(MetaBean.class.getCanonicalName())));
-					data.importType(new FakeTypeElement(typeElement));
+					data.importType(MetaField.class.getName());
+					data.importType(MetaBean.class.getName());
+					data.importType(typeElement.getQualifiedName().toString());
 					for (VariableElement e : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
 						if (!e.getModifiers().contains(Modifier.STATIC)) {
-							FakeTypeElement attrTypeElement = new FakeTypeElement(this.processingEnv, e.asType());
-							if (attrTypeElement.hasAnnotation(Metafy.class)) {
-								data.addChildForm(e);
-							} else {
-								data.importType(attrTypeElement);
-								data.addAttribute(e);
-							}
+							data.addFakeType(new FakeTypeElement(this.processingEnv, e));
 						}
 					}
 

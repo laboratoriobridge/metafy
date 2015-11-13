@@ -3,8 +3,6 @@ package br.ufsc.bridge.metafy.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.lang.model.element.VariableElement;
-
 import br.ufsc.bridge.metafy.FakeTypeElement;
 import br.ufsc.bridge.metafy.MetafyConstants;
 
@@ -15,8 +13,7 @@ public class MetafyClass {
 	protected String simpleReferenceName;
 	protected String completeName;
 	protected List<String> imports;
-	protected List<VariableElement> childForms;
-	protected List<VariableElement> attributes;
+	protected List<FakeTypeElement> fakeTypes;
 
 	public MetafyClass(String completeName) {
 		this.packageName = completeName.substring(0, completeName.lastIndexOf("."));
@@ -24,8 +21,7 @@ public class MetafyClass {
 		this.simpleName = MetafyConstants.PREFIX + this.simpleReferenceName;
 		this.completeName = this.packageName + "." + this.simpleName;
 		this.imports = new ArrayList<String>();
-		this.childForms = new ArrayList<VariableElement>();
-		this.attributes = new ArrayList<VariableElement>();
+		this.fakeTypes = new ArrayList<FakeTypeElement>();
 	}
 
 	public void importType(String element) {
@@ -34,21 +30,9 @@ public class MetafyClass {
 		}
 	}
 
-	public void importType(FakeTypeElement element) {
-		if (!this.imports.contains(element.getQualifiedName().toString())) {
-			this.imports.add(element.getQualifiedName().toString());
-		}
-	}
-
-	public void addChildForm(VariableElement element) {
-		if (!this.childForms.contains(element)) {
-			this.childForms.add(element);
-		}
-	}
-
-	public void addAttribute(VariableElement element) {
-		if (!this.attributes.contains(element)) {
-			this.attributes.add(element);
+	public void addFakeType(FakeTypeElement fakeElement) {
+		if (!this.fakeTypes.contains(fakeElement)) {
+			this.fakeTypes.add(fakeElement);
 		}
 	}
 
@@ -56,12 +40,8 @@ public class MetafyClass {
 		return this.imports;
 	}
 
-	public List<VariableElement> getChildForms() {
-		return this.childForms;
-	}
-
-	public List<VariableElement> getAttributes() {
-		return this.attributes;
+	public List<FakeTypeElement> getFakeTypes() {
+		return this.fakeTypes;
 	}
 
 	public String getSimpleName() {
