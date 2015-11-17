@@ -13,10 +13,10 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
 
+import br.ufsc.bridge.metafy.FakeTypeElement;
 import br.ufsc.bridge.metafy.MetaBean;
 import br.ufsc.bridge.metafy.MetaField;
 import br.ufsc.bridge.metafy.Metafy;
-import br.ufsc.bridge.metafy.util.TypeUtil;
 
 @SupportedAnnotationTypes("br.ufsc.bridge.metafy.Metafy")
 public class MetafyProcessor extends AbstractProcessor {
@@ -44,18 +44,12 @@ public class MetafyProcessor extends AbstractProcessor {
 						data = new MetafyClass(typeElement.getQualifiedName().toString());
 					}
 
-					data.importType(this.processingEnv.getElementUtils().getTypeElement(MetaField.class.getCanonicalName()));
-					data.importType(this.processingEnv.getElementUtils().getTypeElement(MetaBean.class.getCanonicalName()));
-					data.importType(typeElement);
+					data.importType(MetaField.class.getName());
+					data.importType(MetaBean.class.getName());
+					data.importType(typeElement.getQualifiedName().toString());
 					for (VariableElement e : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
 						if (!e.getModifiers().contains(Modifier.STATIC)) {
-							TypeElement attrTypeElement = TypeUtil.resolveVariableType(this.processingEnv, e);
-							if (attrTypeElement.getAnnotation(Metafy.class) != null) {
-								data.addChildForm(e);
-							} else {
-								data.importType(attrTypeElement);
-								data.addAttribute(e);
-							}
+							data.addFakeType(new FakeTypeElement(this.processingEnv, e));
 						}
 					}
 
