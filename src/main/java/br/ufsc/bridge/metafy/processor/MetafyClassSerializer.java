@@ -3,8 +3,8 @@ package br.ufsc.bridge.metafy.processor;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.JavaFileObject;
@@ -25,19 +25,17 @@ public class MetafyClassSerializer {
 		pw.println(String.format("package %s;", data.getPackageName()));
 		pw.println();
 
+		Set<String> imports = new TreeSet<>();
 		for (String importString : data.getImports()) {
-			pw.println(String.format("import %s;", importString));
+			imports.add(String.format("import %s;", importString));
 		}
-
-		pw.println();
-
-		Set<String> imports = new HashSet<>();
 		for (FakeTypeElement e : data.getFakeTypes()) {
-			String value = e.getImport();
-			if (value != null && !imports.contains(value)) {
-				pw.println(value);
+			for (String value : e.getImport()) {
 				imports.add(value);
 			}
+		}
+		for (String value : imports) {
+			pw.println(value);
 		}
 
 		pw.println();
