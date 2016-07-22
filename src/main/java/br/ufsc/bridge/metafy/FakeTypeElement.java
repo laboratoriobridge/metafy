@@ -1,6 +1,8 @@
 package br.ufsc.bridge.metafy;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
@@ -54,20 +56,26 @@ public class FakeTypeElement {
 		this.qualifiedName = typeElement.getQualifiedName().toString();
 	}
 
-	public String getImport() {
+	public List<String> getImport() {
+		List<String> imports = new ArrayList<>();
 		if (this.internalMetafy) {
-			return String.format("import %s;", this.qualifiedName.replace(this.simpleName, MetafyConstants.PREFIX + this.simpleName));
+			imports.add(String.format("import %s;", this.qualifiedName.replace(this.simpleName, MetafyConstants.PREFIX + this.simpleName)));
+
 		} else if (!this.primitive) {
-			String format = String.format("import %s;", this.qualifiedName);
-			if (this.isList(this.qualifiedName)) {
-				format += "\n" + String.format("import %s;", MetaList.class.getName());
-			} else if (this.isSet(this.qualifiedName)) {
-				format += "\n" + String.format("import %s;", MetaSet.class.getName());
+
+			if (!this.qualifiedName.startsWith("java.lang")) {
+				imports.add(String.format("import %s;", this.qualifiedName));
 			}
-			return format;
-		} else {
-			return null;
+
+			if (this.isList(this.qualifiedName)) {
+				imports.add(String.format("import %s;", MetaList.class.getName()));
+			} else if (this.isSet(this.qualifiedName)) {
+				imports.add(String.format("import %s;", MetaSet.class.getName()));
+			} else {
+				imports.add(String.format("import %s;", MetaField.class.getName()));
+			}
 		}
+		return imports;
 	}
 
 	public void writeAttribute(PrintWriter pw) {
