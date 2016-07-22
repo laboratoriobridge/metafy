@@ -17,6 +17,7 @@ import br.ufsc.bridge.metafy.FakeTypeElement;
 import br.ufsc.bridge.metafy.MetaBean;
 import br.ufsc.bridge.metafy.MetaField;
 import br.ufsc.bridge.metafy.Metafy;
+import br.ufsc.bridge.metafy.utils.TypeUtils;
 
 @SupportedAnnotationTypes("br.ufsc.bridge.metafy.Metafy")
 public class MetafyProcessor extends AbstractProcessor {
@@ -30,6 +31,8 @@ public class MetafyProcessor extends AbstractProcessor {
 		if (roundEnv.processingOver() || annotations.size() == 0) {
 			return false;
 		}
+
+		TypeUtils typeUtils = new TypeUtils(this.processingEnv);
 
 		for (Element elem : roundEnv.getElementsAnnotatedWith(Metafy.class)) {
 			if (elem.getKind() == ElementKind.CLASS) {
@@ -49,7 +52,9 @@ public class MetafyProcessor extends AbstractProcessor {
 					data.importType(typeElement.getQualifiedName().toString());
 					for (VariableElement e : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
 						if (!e.getModifiers().contains(Modifier.STATIC)) {
-							data.addFakeType(new FakeTypeElement(this.processingEnv, e));
+							boolean isList = typeUtils.isAssignableToList(e.asType());
+							boolean isSet = typeUtils.isAssignableToSet(e.asType());
+							data.addFakeType(new FakeTypeElement(this.processingEnv, e, isList, isSet));
 						}
 					}
 
