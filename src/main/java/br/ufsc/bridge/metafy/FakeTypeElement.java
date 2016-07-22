@@ -20,8 +20,15 @@ public class FakeTypeElement {
 	private String simpleName;
 	private String attributeName;
 
-	public FakeTypeElement(ProcessingEnvironment processingEnv, VariableElement variable) {
+	private boolean list = false;
+
+	private boolean set = false;
+
+	public FakeTypeElement(ProcessingEnvironment processingEnv, VariableElement variable, boolean list, boolean set) {
 		this.attributeName = variable.getSimpleName().toString();
+		this.list = list;
+		this.set = set;
+
 		TypeMirror typeMirror = variable.asType();
 		String typeToString = typeMirror.toString();
 
@@ -55,7 +62,8 @@ public class FakeTypeElement {
 		}
 		this.simpleName = typeElement.getSimpleName().toString();
 		this.qualifiedName = typeElement.getQualifiedName().toString();
-		if (this.isList(this.qualifiedName) || this.isSet(this.qualifiedName)) {
+
+		if (this.list || this.set) {
 			TypeMirror genericElement = ((DeclaredType) typeMirror).getTypeArguments().get(0);
 			TypeElement asElement = (TypeElement) processingEnv.getTypeUtils().asElement(genericElement);
 			this.simpleName = asElement.getSimpleName().toString();
@@ -73,9 +81,9 @@ public class FakeTypeElement {
 				imports.add(String.format("import %s;", this.qualifiedName));
 			}
 
-			if (this.isList(this.qualifiedName)) {
+			if (this.list) {
 				imports.add(String.format("import %s;", MetaList.class.getName()));
-			} else if (this.isSet(this.qualifiedName)) {
+			} else if (this.set) {
 				imports.add(String.format("import %s;", MetaSet.class.getName()));
 			} else {
 				imports.add(String.format("import %s;", MetaField.class.getName()));
@@ -93,10 +101,10 @@ public class FakeTypeElement {
 	}
 
 	private void generateConstantAttribute(PrintWriter pw) {
-		if (!this.primitive && this.isSet(this.qualifiedName)) {
+		if (!this.primitive && this.set) {
 			pw.println("\t@SuppressWarnings(\"rawtypes\")");
 			pw.println(String.format("\tpublic final MetaSet<%s> %s = createSet(\"%s\");", this.simpleName, this.attributeName, this.attributeName));
-		} else if (!this.primitive && this.isList(this.qualifiedName)) {
+		} else if (!this.primitive && this.list) {
 			pw.println("\t@SuppressWarnings(\"rawtypes\")");
 			pw.println(String.format("\tpublic final MetaList<%s> %s = createList(\"%s\");", this.simpleName, this.attributeName, this.attributeName));
 		} else if (!this.primitive && this.isMap(this.qualifiedName)) {
@@ -108,14 +116,6 @@ public class FakeTypeElement {
 		} else {
 			pw.println(String.format("\tpublic final MetaField<%s> %s = createField(%s.class, \"%s\");", this.simpleName, this.attributeName, this.simpleName, this.attributeName));
 		}
-	}
-
-	private boolean isSet(String qualifiedName) {
-		return qualifiedName.startsWith("java.util.Set");
-	}
-
-	private boolean isList(String qualifiedName) {
-		return qualifiedName.startsWith("java.util.List");
 	}
 
 	private boolean isMap(String qualifiedName) {
