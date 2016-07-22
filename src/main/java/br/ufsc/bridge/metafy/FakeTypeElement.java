@@ -24,6 +24,8 @@ public class FakeTypeElement {
 
 	private boolean set = false;
 
+	private String genericQualifideName = null;
+
 	public FakeTypeElement(ProcessingEnvironment processingEnv, VariableElement variable, boolean list, boolean set) {
 		this.attributeName = variable.getSimpleName().toString();
 		this.list = list;
@@ -67,6 +69,7 @@ public class FakeTypeElement {
 			TypeMirror genericElement = ((DeclaredType) typeMirror).getTypeArguments().get(0);
 			TypeElement asElement = (TypeElement) processingEnv.getTypeUtils().asElement(genericElement);
 			this.simpleName = asElement.getSimpleName().toString();
+			this.genericQualifideName = asElement.getQualifiedName().toString();
 		}
 	}
 
@@ -80,7 +83,9 @@ public class FakeTypeElement {
 			if (!this.qualifiedName.startsWith("java.lang")) {
 				imports.add(String.format("import %s;", this.qualifiedName));
 			}
-
+			if (this.genericQualifideName != null) {
+				imports.add(String.format("import %s;", this.genericQualifideName));
+			}
 			if (this.list) {
 				imports.add(String.format("import %s;", MetaList.class.getName()));
 			} else if (this.set) {
