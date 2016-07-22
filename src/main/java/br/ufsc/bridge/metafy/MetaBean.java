@@ -20,15 +20,15 @@ public class MetaBean<T> extends MetaField<T> {
 	}
 
 	protected <TYPE> MetaField<TYPE> createField(Class<TYPE> fieldType, String fieldName) {
-		return new MetaField<TYPE>(this, fieldType, fieldName);
+		return new MetaField<>(this, fieldType, fieldName);
 	}
 
 	protected <TYPE> MetaList<TYPE> createList(String fieldName) {
-		return new MetaList<TYPE>(this, fieldName);
+		return new MetaList<>(this, fieldName);
 	}
 
 	protected <TYPE> MetaSet<TYPE> createSet(String fieldName) {
-		return new MetaSet<TYPE>(this, fieldName);
+		return new MetaSet<>(this, fieldName);
 	}
 
 }

@@ -20,8 +20,8 @@ public class MetafyClass {
 		this.simpleReferenceName = completeName.substring(completeName.lastIndexOf(".") + 1, completeName.length());
 		this.simpleName = MetafyConstants.PREFIX + this.simpleReferenceName;
 		this.completeName = this.packageName + "." + this.simpleName;
-		this.imports = new ArrayList<String>();
-		this.fakeTypes = new ArrayList<FakeTypeElement>();
+		this.imports = new ArrayList<>();
+		this.fakeTypes = new ArrayList<>();
 	}
 
 	public void importType(String element) {

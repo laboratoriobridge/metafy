@@ -15,7 +15,6 @@ import javax.tools.Diagnostic.Kind;
 
 import br.ufsc.bridge.metafy.FakeTypeElement;
 import br.ufsc.bridge.metafy.MetaBean;
-import br.ufsc.bridge.metafy.MetaField;
 import br.ufsc.bridge.metafy.Metafy;
 import br.ufsc.bridge.metafy.utils.TypeUtils;
 
@@ -47,7 +46,6 @@ public class MetafyProcessor extends AbstractProcessor {
 						data = new MetafyClass(typeElement.getQualifiedName().toString());
 					}
 
-					data.importType(MetaField.class.getName());
 					data.importType(MetaBean.class.getName());
 					data.importType(typeElement.getQualifiedName().toString());
 					for (VariableElement e : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
