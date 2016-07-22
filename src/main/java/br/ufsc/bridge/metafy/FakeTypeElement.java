@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
@@ -32,13 +33,13 @@ public class FakeTypeElement {
 			if (typeElement == null) {
 				this.mountPrimitiveType(type);
 			} else {
-				this.mountObjectType(processingEnv, typeElement);
+				this.mountObjectType(processingEnv, typeElement, typeMirror);
 			}
 		} else {
 			if (typeMirror.getKind().isPrimitive()) {
 				this.mountPrimitiveType(typeToString);
 			} else {
-				this.mountObjectType(processingEnv, (TypeElement) processingEnv.getTypeUtils().asElement(typeMirror));
+				this.mountObjectType(processingEnv, (TypeElement) processingEnv.getTypeUtils().asElement(typeMirror), typeMirror);
 			}
 		}
 	}
@@ -48,12 +49,17 @@ public class FakeTypeElement {
 		this.simpleName = type;
 	}
 
-	private void mountObjectType(ProcessingEnvironment processingEnv, TypeElement typeElement) {
+	private void mountObjectType(ProcessingEnvironment processingEnv, TypeElement typeElement, TypeMirror typeMirror) {
 		if (typeElement.getAnnotation(Metafy.class) != null) {
 			this.internalMetafy = true;
 		}
 		this.simpleName = typeElement.getSimpleName().toString();
 		this.qualifiedName = typeElement.getQualifiedName().toString();
+		if (this.isList(this.qualifiedName) || this.isSet(this.qualifiedName)) {
+			TypeMirror genericElement = ((DeclaredType) typeMirror).getTypeArguments().get(0);
+			TypeElement asElement = (TypeElement) processingEnv.getTypeUtils().asElement(genericElement);
+			this.simpleName = asElement.getSimpleName().toString();
+		}
 	}
 
 	public List<String> getImport() {
