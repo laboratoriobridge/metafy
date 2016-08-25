@@ -47,9 +47,9 @@
     </build>
 
     <scm>
-        <connection>scm:git:git@github.com:bridge-ufsc/metafy.git</connection>
-        <url>scm:git:git@github.com:bridge-ufsc/metafy.git</url>
-        <developerConnection>scm:git:git@github.com:bridge-ufsc/metafy.git</developerConnection>
+        <connection>scm:git:git@github.com:laboratoriobridge/metafy.git</connection>
+        <url>scm:git:git@github.com:laboratoriobridge/metafy.git</url>
+        <developerConnection>scm:git:git@github.com:laboratoriobridge/metafy.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
