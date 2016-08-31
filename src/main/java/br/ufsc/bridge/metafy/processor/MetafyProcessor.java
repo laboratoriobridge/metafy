@@ -26,15 +26,15 @@ public class MetafyProcessor extends AbstractProcessor {
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		try {
-			if (roundEnv.processingOver() || annotations.size() == 0) {
-				return false;
-			}
+		if (roundEnv.processingOver() || annotations.size() == 0) {
+			return false;
+		}
 
-			for (Element elem : roundEnv.getElementsAnnotatedWith(Metafy.class)) {
-				if (elem.getKind() == ElementKind.CLASS) {
-					TypeElement typeElement = (TypeElement) elem;
+		for (Element elem : roundEnv.getElementsAnnotatedWith(Metafy.class)) {
+			if (elem.getKind() == ElementKind.CLASS) {
+				TypeElement typeElement = (TypeElement) elem;
 
+				try {
 					MetafyClass data;
 
 					if (elem.getModifiers().contains(Modifier.STATIC)) {
@@ -53,12 +53,13 @@ public class MetafyProcessor extends AbstractProcessor {
 
 					new MetafyClassSerializer().serialize(this.processingEnv, data);
 
+				} catch (Exception e) {
+					this.processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
+					e.printStackTrace();
 				}
 			}
-		} catch (Exception e) {
-			this.processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
-			e.printStackTrace();
 		}
+
 		return false;
 	}
 
