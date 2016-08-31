@@ -21,8 +21,8 @@ public class FakeTypeElement {
 	private String attributeName;
 
 	private boolean list = false;
-
 	private boolean set = false;
+	private boolean valid = true;
 
 	private String genericQualifiedName = null;
 
@@ -74,6 +74,8 @@ public class FakeTypeElement {
 				if (asElement != null) {
 					this.simpleName = asElement.getSimpleName().toString();
 					this.genericQualifiedName = asElement.getQualifiedName().toString();
+				} else {
+					this.valid = false;
 				}
 			}
 		}
@@ -112,13 +114,13 @@ public class FakeTypeElement {
 	}
 
 	private void generateConstantAttribute(PrintWriter pw) {
-		if (!this.primitive && this.set) {
+		if (!this.primitive && this.set && this.valid) {
 			pw.println(String.format("\tpublic final MetaSet<%s> %s = createSet(\"%s\");", this.simpleName, this.attributeName, this.attributeName));
-		} else if (!this.primitive && this.list) {
+		} else if (!this.primitive && this.list && this.valid) {
 			pw.println(String.format("\tpublic final MetaList<%s> %s = createList(\"%s\");", this.simpleName, this.attributeName, this.attributeName));
-		} else if (!this.primitive && this.isMap(this.qualifiedName)) {
+		} else if (!this.primitive && this.isMap(this.qualifiedName) || !this.valid) {
 			// TODO
-			pw.println(String.format("\t// attributo %s do tipo Map não suportado", this.attributeName));
+			pw.println(String.format("\t// atributo %s de tipo não suportado", this.attributeName));
 		} else if (this.arrayMode) {
 			pw.println(String.format("\tpublic final MetaField<%s[]> %s = createField(%s[].class, \"%s\");", this.simpleName, this.attributeName, this.simpleName,
 					this.attributeName));
