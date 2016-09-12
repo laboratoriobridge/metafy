@@ -1,11 +1,13 @@
 package br.ufsc.bridge.metafy;
 
+import java.io.Serializable;
+
 /**
  * MetaField represents field meta information
  *
  * @param <T> field type
  */
-public class MetaField<T> {
+public class MetaField<T> implements Serializable {
 
 	private final String alias;
 	private Class<T> type;
