@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 public class MetaField<T> implements Serializable {
 
+	private static final long serialVersionUID = 2458343333099893473L;
+
 	private final String alias;
 	private Class<T> type;
 	private MetaField<?> parent;
