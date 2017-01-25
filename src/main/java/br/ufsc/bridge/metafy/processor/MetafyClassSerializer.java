@@ -43,7 +43,19 @@ public class MetafyClassSerializer {
 		pw.println(String.format("public class %s extends MetaBean<%s> {", constantsClassName, constantsReferenceName));
 		pw.println();
 
-		pw.println(String.format("\tpublic static %s meta = new %s();", constantsClassName, constantsClassName));
+		pw.println(String.format("\tpublic static final %s meta = new %s();", constantsClassName, constantsClassName));
+		pw.println();
+
+		for (FakeTypeElement e : data.getFakeTypes()) {
+			e.writeAttribute(pw);
+		}
+
+		pw.println();
+
+		for (FakeTypeElement e : data.getFakeTypes()) {
+			e.writeConstantMethod(pw);
+		}
+
 		pw.println();
 
 		// Construtor padrão
@@ -63,16 +75,6 @@ public class MetafyClassSerializer {
 		pw.println(String.format("\t\tsuper(parent, %s.class, alias);", constantsReferenceName));
 		pw.println(String.format("\t}"));
 		pw.println();
-
-		for (FakeTypeElement e : data.getFakeTypes()) {
-			e.writeAttribute(pw);
-		}
-
-		pw.println();
-
-		for (FakeTypeElement e : data.getFakeTypes()) {
-			e.writeConstantMethod(pw);
-		}
 
 		pw.println("}");
 
