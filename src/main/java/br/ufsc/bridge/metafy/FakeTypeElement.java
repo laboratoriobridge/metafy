@@ -2,7 +2,10 @@ package br.ufsc.bridge.metafy;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.TypeElement;
@@ -12,6 +15,25 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 public class FakeTypeElement {
+
+	/** A map from primitive types to their corresponding wrapper types. */
+	private static final Map<String, String> PRIMITIVE_TO_WRAPPER_TYPE;
+
+	static {
+		Map<String, String> primToWrap = new HashMap<String, String>(9);
+
+		primToWrap.put("boolean", "Boolean");
+	    primToWrap.put("byte", "Byte");
+	    primToWrap.put("char", "Character");
+	    primToWrap.put("double", "Double");
+	    primToWrap.put("float", "Float");
+	    primToWrap.put("int", "Integer");
+	    primToWrap.put("long", "Long");
+	    primToWrap.put("short", "Short");
+	    primToWrap.put("void", "Void");
+
+	    PRIMITIVE_TO_WRAPPER_TYPE = Collections.unmodifiableMap(primToWrap);
+	}
 
 	private boolean arrayMode = false;
 	private boolean primitive = false;
@@ -53,7 +75,11 @@ public class FakeTypeElement {
 
 	private void mountPrimitiveType(String type) {
 		this.primitive = true;
-		this.simpleName = type;
+		if(this.arrayMode) {
+			this.simpleName = type;
+		} else {
+			this.simpleName = PRIMITIVE_TO_WRAPPER_TYPE.get(type);
+		}
 	}
 
 	private void mountObjectType(ProcessingEnvironment processingEnv, TypeElement typeElement, TypeMirror typeMirror) {
