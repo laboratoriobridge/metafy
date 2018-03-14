@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/laboratoriobridge/metafy.svg?branch=master)](https://travis-ci.org/laboratoriobridge/metafy)
+
 # Metafy
 
 Generate meta information for Java objects.
