@@ -5,8 +5,8 @@ import br.ufsc.bridge.metafy.processor.exception.DefaultPackageException;
 
 public class MetafyStaticClass extends MetafyClass {
 
-	public MetafyStaticClass(String completeName) {
-		super(completeName);
+	public MetafyStaticClass(String completeName, String referenceName) {
+		super(completeName, referenceName);
 		String[] parts = completeName.split("\\.");
 		if (this.packageName.lastIndexOf(PACKAGE_SEPARATOR) > 0) {
 			this.packageName = this.packageName.substring(0, this.packageName.lastIndexOf(PACKAGE_SEPARATOR));

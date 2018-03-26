@@ -32,7 +32,7 @@ public class AttributeVisitor extends SimpleTypeVisitor6<Attribute, MetafyClassC
 		} else if (this.isSet(t.toString())) {
 			return new SetAttribute(t, p.getActualElement());
 		} else if (t.asElement().getAnnotation(Metafy.class) != null) {
-			return new MetaReferenceAttribute(t, p.getActualElement());
+			return new MetaReferenceAttribute(t, p, p.getActualElement());
 		} else {
 			return new SimpleAttribute(t, p.getActualElement());
 		}

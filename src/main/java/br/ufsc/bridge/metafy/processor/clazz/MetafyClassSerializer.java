@@ -1,11 +1,17 @@
 package br.ufsc.bridge.metafy.processor.clazz;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.annotation.Generated;
 import javax.annotation.processing.ProcessingEnvironment;
 
 import br.ufsc.bridge.metafy.processor.MetafyProcessor;
+import br.ufsc.bridge.metafy.processor.exception.UnexpectedException;
 
 public class MetafyClassSerializer {
 
@@ -25,6 +31,12 @@ public class MetafyClassSerializer {
 					attribute.initialize(processingEnvironment);
 					attribute.importTypes(data);
 				});
+
+		data.getInnerClasses().values().stream()
+			.forEach(innerClass -> {
+				innerClass.getImports().forEach(data::importType);
+				innerClass.getAttributes().stream().forEach(attribute -> attribute.importTypes(data));
+			});
 
 		data.getImports().stream()
 				.filter(importString -> !importString.startsWith("java.lang"))
@@ -63,6 +75,25 @@ public class MetafyClassSerializer {
 		pw.println();
 
 		data.getAttributes().stream().forEach(attribute -> attribute.writeConstantMethod(pw));
+
+		data.getInnerClasses().values().stream()
+			.forEach(innerClass -> {
+				StringWriter out = new StringWriter();
+				PrintWriter innerPw = new PrintWriter(new BufferedWriter(out));
+				new MetafyInnerClassSerializer().serialize(innerClass, innerPw);
+				innerPw.flush();
+				innerPw.close();
+				BufferedReader reader = new BufferedReader(new StringReader(out.toString()));
+				String sCurrentLine;
+				try {
+					while ((sCurrentLine = reader.readLine()) != null) {
+						pw.println("\t"+sCurrentLine);
+					}
+					reader.close();
+				} catch (IOException e) {
+					throw new UnexpectedException(e);
+				}
+			});
 
 		pw.println("}");
 

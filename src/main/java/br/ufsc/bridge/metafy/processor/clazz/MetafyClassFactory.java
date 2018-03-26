@@ -20,16 +20,21 @@ public class MetafyClassFactory {
 	}
 
 	public static MetafyClass create(TypeElement typeElement, MetafyClassContext context) {
+		return create(typeElement.getQualifiedName().toString(), typeElement, context);
+	}
+
+	public static MetafyClass create(String name, TypeElement typeElement, MetafyClassContext context) {
 		MetafyClass data;
 
 		if (typeElement.getModifiers().contains(Modifier.STATIC)) {
-			data = new MetafyStaticClass(typeElement.getQualifiedName().toString());
+			data = new MetafyStaticClass(name, typeElement.getQualifiedName().toString());
 		} else {
-			data = new MetafyClass(typeElement.getQualifiedName().toString());
+			data = new MetafyClass(name, typeElement.getQualifiedName().toString());
 		}
 
 		data.importType(MetaBean.class.getName());
 		data.importType(typeElement.getQualifiedName().toString());
+		context.setClazz(data);
 		visitAttributes(typeElement, data, context);
 		return data;
 	}

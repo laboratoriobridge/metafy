@@ -10,7 +10,16 @@ import javax.lang.model.type.TypeMirror;
 public class MetafyClassContext {
 
 	private Map<TypeParameterElement, TypeMirror> typeMap = new HashMap<>();
+	private MetafyClass clazz;
 	private VariableElement actualElement;
+
+	public MetafyClass getClazz() {
+		return this.clazz;
+	}
+
+	public void setClazz(MetafyClass clazz) {
+		this.clazz = clazz;
+	}
 
 	public TypeMirror getTypeFor(TypeParameterElement element) {
 		return this.typeMap.get(element);
