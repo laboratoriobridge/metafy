@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/laboratoriobridge/metafy.svg?branch=master)](https://travis-ci.org/laboratoriobridge/metafy)
+[![codecov](https://codecov.io/gh/laboratoriobridge/metafy/branch/master/graph/badge.svg)](https://codecov.io/gh/laboratoriobridge/metafy)
 
 # Metafy
 
