@@ -1,7 +1,9 @@
 package br.ufsc.bridge.metafy.processor.clazz;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,11 +21,12 @@ public class MetafyClass {
 	protected String completeName;
 	protected Set<String> imports;
 	protected List<Attribute> attributes;
+	private Map<String, MetafyClass> innerClasses = new HashMap<>();
 
-	public MetafyClass(String completeName) {
+	public MetafyClass(String completeName, String referenceName) {
 		if (completeName.lastIndexOf(PACKAGE_SEPARATOR) > 0) {
 			this.packageName = completeName.substring(0, completeName.lastIndexOf(PACKAGE_SEPARATOR));
-			this.simpleReferenceName = completeName.substring(completeName.lastIndexOf(PACKAGE_SEPARATOR) + 1, completeName.length());
+			this.simpleReferenceName = referenceName.substring(referenceName.lastIndexOf(PACKAGE_SEPARATOR) + 1, referenceName.length());
 			this.simpleName = MetafyProcessorConstants.PREFIX + this.simpleReferenceName;
 			this.completeName = this.packageName + PACKAGE_SEPARATOR + this.simpleName;
 		} else {
@@ -68,6 +71,18 @@ public class MetafyClass {
 
 	public String getPackageName() {
 		return this.packageName;
+	}
+
+	public Map<String, MetafyClass> getInnerClasses() {
+		return this.innerClasses;
+	}
+
+	public boolean hasInnerClassFor(String name) {
+		return this.getInnerClasses().containsKey(name);
+	}
+
+	public void addInnerClass(String name, MetafyClass innerClass) {
+		this.getInnerClasses().put(name, innerClass);
 	}
 
 }

@@ -1,11 +1,6 @@
 package br.ufsc.bridge.metafy.processor.type;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
@@ -17,8 +12,6 @@ import br.ufsc.bridge.metafy.processor.MetafyProcessorConstants;
 import br.ufsc.bridge.metafy.processor.clazz.MetafyClass;
 import br.ufsc.bridge.metafy.processor.clazz.MetafyClassContext;
 import br.ufsc.bridge.metafy.processor.clazz.MetafyClassFactory;
-import br.ufsc.bridge.metafy.processor.clazz.MetafyInnerClassSerializer;
-import br.ufsc.bridge.metafy.processor.exception.UnexpectedException;
 
 public class MetaReferenceAttribute implements Attribute {
 
@@ -27,12 +20,13 @@ public class MetaReferenceAttribute implements Attribute {
 	private String importString;
 	private VariableElement element;
 	private DeclaredType type;
-	private MetafyClass innerClass;
+	private MetafyClassContext context;
 
 
-	public MetaReferenceAttribute(DeclaredType type, VariableElement element) {
+	public MetaReferenceAttribute(DeclaredType type, MetafyClassContext context, VariableElement element) {
 		super();
 		this.type = type;
+		this.context = context;
 		this.element = element;
 	}
 
@@ -41,7 +35,32 @@ public class MetaReferenceAttribute implements Attribute {
 		TypeElement typeElement = (TypeElement) this.type.asElement();
 		this.attributeName = this.element.getSimpleName().toString();
 		String simpleName = typeElement.getSimpleName().toString();
-		if (typeElement.getModifiers().contains(Modifier.STATIC)) {
+		if (!this.type.getTypeArguments().isEmpty()) {
+			MetafyClassContext innerContext = new MetafyClassContext();
+
+			StringBuilder innerClassNameBuilder = new StringBuilder();
+			innerClassNameBuilder.append(typeElement.getQualifiedName().toString());
+
+			for(int i=0; i < this.type.getTypeArguments().size(); i++) {
+				innerClassNameBuilder.append(((DeclaredType) this.type.getTypeArguments().get(i)).asElement().getSimpleName());
+
+				innerContext.addTypeMapping(typeElement.getTypeParameters().get(i), this.type.getTypeArguments().get(i));
+			}
+
+			MetafyClass innerClass;
+			String innerClassName = innerClassNameBuilder.toString();
+			if (!this.context.getClazz().hasInnerClassFor(innerClassName)) {
+				innerClass = MetafyClassFactory.create(innerClassName, typeElement, innerContext);
+				innerClass.getAttributes().stream().forEach(attribute -> attribute.initialize(processingEnv));
+
+				this.context.getClazz().addInnerClass(innerClassName, innerClass);
+			} else {
+				innerClass = this.context.getClazz().getInnerClasses().get(innerClassName);
+			}
+
+			this.typeName = innerClass.getSimpleName();
+			this.importString = null;
+		} else if (typeElement.getModifiers().contains(Modifier.STATIC)) {
 			TypeElement parentTypeElement = (TypeElement) typeElement.getEnclosingElement();
 			this.typeName = MetafyProcessorConstants.PREFIX + parentTypeElement.getSimpleName() + "_" + simpleName;
 			this.importString = parentTypeElement.getQualifiedName().toString().replace(parentTypeElement.getSimpleName(), this.typeName);
@@ -49,28 +68,12 @@ public class MetaReferenceAttribute implements Attribute {
 			this.typeName = MetafyProcessorConstants.PREFIX + simpleName;
 			this.importString = typeElement.getQualifiedName().toString().replace(simpleName, this.typeName);
 		}
-		if (!this.type.getTypeArguments().isEmpty()) {
-			MetafyClassContext context = new MetafyClassContext();
-
-			for(int i=0; i < this.type.getTypeArguments().size(); i++) {
-				context.addTypeMapping(typeElement.getTypeParameters().get(i), this.type.getTypeArguments().get(i));
-			}
-
-			this.innerClass = MetafyClassFactory.create(typeElement, context);
-
-			this.innerClass.getAttributes().stream().forEach(attribute -> attribute.initialize(processingEnv));
-
-			this.importString = null;
-		}
 	}
 
 	@Override
 	public void importTypes(MetafyClass metaClass) {
 		if (this.importString != null) {
 			metaClass.importType(this.importString);
-		} else if (this.innerClass != null) {
-			this.innerClass.getImports().stream().forEach(metaClass::importType);
-			this.innerClass.getAttributes().stream().forEach(attribute -> attribute.importTypes(metaClass));
 		}
 	}
 
@@ -88,23 +91,5 @@ public class MetaReferenceAttribute implements Attribute {
 		pw.println(String.format("\t\treturn %s;", this.attributeName));
 		pw.println("\t}");
 		pw.println();
-
-		if (this.innerClass != null) {
-			StringWriter out = new StringWriter();
-			PrintWriter innerPw = new PrintWriter(new BufferedWriter(out));
-			new MetafyInnerClassSerializer().serialize(this.innerClass, innerPw);
-			innerPw.flush();
-			innerPw.close();
-			BufferedReader reader = new BufferedReader(new StringReader(out.toString()));
-			String sCurrentLine;
-			try {
-				while ((sCurrentLine = reader.readLine()) != null) {
-					pw.println("\t"+sCurrentLine);
-				}
-				reader.close();
-			} catch (IOException e) {
-				throw new UnexpectedException(e);
-			}
-		}
 	}
 }
