@@ -37,8 +37,8 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <id>repo-bridge</id>
+      <url>https://repositorio.bridge.ufsc.br/repository/snapshots/</url>
     </snapshotRepository>
     <repository>
       <id>ossrh</id>
