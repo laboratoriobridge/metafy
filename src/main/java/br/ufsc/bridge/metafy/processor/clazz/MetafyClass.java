@@ -27,7 +27,7 @@ public class MetafyClass {
 		if (completeName.lastIndexOf(PACKAGE_SEPARATOR) > 0) {
 			this.packageName = completeName.substring(0, completeName.lastIndexOf(PACKAGE_SEPARATOR));
 			this.simpleReferenceName = referenceName.substring(referenceName.lastIndexOf(PACKAGE_SEPARATOR) + 1, referenceName.length());
-			this.simpleName = MetafyProcessorConstants.PREFIX + this.simpleReferenceName;
+			this.simpleName = MetafyProcessorConstants.PREFIX + completeName.substring(completeName.lastIndexOf(PACKAGE_SEPARATOR) + 1, completeName.length());
 			this.completeName = this.packageName + PACKAGE_SEPARATOR + this.simpleName;
 		} else {
 			throw new DefaultPackageException("default package not suported by Metafy.");
