@@ -3,7 +3,7 @@
 
   <groupId>br.ufsc.bridge</groupId>
   <artifactId>metafy</artifactId>
-  <version>0.1.2</version>
+  <version>0.1.3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>${project.groupId}:${project.artifactId}</name>
@@ -151,7 +151,7 @@
     <connection>scm:git:git@github.com:laboratoriobridge/metafy.git</connection>
     <url>scm:git:git@github.com:laboratoriobridge/metafy.git</url>
     <developerConnection>scm:git:git@github.com:laboratoriobridge/metafy.git</developerConnection>
-    <tag>0.1.2</tag>
+    <tag>HEAD</tag>
   </scm>
 
 </project>
