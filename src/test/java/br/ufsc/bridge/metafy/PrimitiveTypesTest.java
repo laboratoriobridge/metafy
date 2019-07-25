@@ -18,7 +18,6 @@ public class PrimitiveTypesTest {
 			.compile(JavaFileObjects.forSourceLines("TestDto",
 					"package br.ufsc.bridge.metafy.test;",
 					"",
-					"import java.util.Date;",
 					"import br.ufsc.bridge.metafy.Metafy;",
 					"",
 					"@Metafy",

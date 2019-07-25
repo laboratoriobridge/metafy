@@ -19,12 +19,17 @@ public class IgnoreStaticAttributesTest {
 					"package br.ufsc.bridge.metafy.test;",
 					"",
 					"import br.ufsc.bridge.metafy.Metafy;",
+					"import java.util.List;",
 					"",
 					"@Metafy",
 					"public class TestDto {",
 					"",
 					"	private static long id;",
 					"	private static boolean check;",
+					"	private static Long number;",
+					"	private static List<String> names;",
+					"	private static Long[] values;",
+					"	private static Object obj;",
 					"",
 					"}"
 					));

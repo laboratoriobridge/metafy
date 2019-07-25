@@ -34,7 +34,7 @@ public class AttributeVisitor extends SimpleTypeVisitor6<Attribute, MetafyClassC
 	public Attribute visitDeclared(DeclaredType t, MetafyClassContext p) {
 		if (t.asElement().getAnnotation(Metafy.class) != null) {
 			return new MetaReferenceAttribute(t, p, p.getActualElement());
-		} else if (!t.asElement().getModifiers().contains(Modifier.STATIC)) {
+		} else if (!p.getActualElement().getModifiers().contains(Modifier.STATIC)) {
 			if(this.isList(t.toString())) {
 				return new ListAttribute(t, p.getActualElement());
 			} else if (this.isMap(t.toString())) {
@@ -62,12 +62,10 @@ public class AttributeVisitor extends SimpleTypeVisitor6<Attribute, MetafyClassC
 
 	@Override
 	public Attribute visitTypeVariable(TypeVariable t, MetafyClassContext p) {
-		if (!t.asElement().getModifiers().contains(Modifier.STATIC)) {
-			TypeMirror typeMirror = p.getTypeFor((TypeParameterElement) t.asElement());
+		TypeMirror typeMirror = p.getTypeFor((TypeParameterElement) t.asElement());
 
-			if (typeMirror != null) {
-				return new SimpleAttribute((DeclaredType) typeMirror, p.getActualElement());
-			}
+		if (typeMirror != null) {
+			return new SimpleAttribute((DeclaredType) typeMirror, p.getActualElement());
 		}
 		return super.visitTypeVariable(t, p);
 	}
