@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
@@ -20,6 +22,7 @@ import br.ufsc.bridge.metafy.processor.clazz.MetafyClassFactory;
 import br.ufsc.bridge.metafy.processor.clazz.MetafyClassSerializer;
 import br.ufsc.bridge.metafy.processor.exception.UnexpectedException;
 
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes("br.ufsc.bridge.metafy.Metafy")
 public class MetafyProcessor extends AbstractProcessor {
 
