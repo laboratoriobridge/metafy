@@ -12,7 +12,7 @@ import com.google.testing.compile.JavaFileObjects;
 public class GenericInnerTypeTest {
 
 	@Test
-	public void genericInerTypes() {
+	public void genericInnerTypes() {
 		Compilation compilation = Compiler.javac()
 			.withProcessors(new MetafyProcessor())
 			.compile(JavaFileObjects.forSourceLines("TestDto",

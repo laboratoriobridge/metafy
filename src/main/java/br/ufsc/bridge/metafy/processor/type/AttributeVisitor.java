@@ -1,5 +1,6 @@
 package br.ufsc.bridge.metafy.processor.type;
 
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -15,26 +16,34 @@ public class AttributeVisitor extends SimpleTypeVisitor6<Attribute, MetafyClassC
 
 	@Override
 	public Attribute visitPrimitive(PrimitiveType t, MetafyClassContext p) {
-		return new PrimitiveAttribute(p.getActualElement());
+		if (!p.getActualElement().getModifiers().contains(Modifier.STATIC)) {
+			return new PrimitiveAttribute(p.getActualElement());
+		}
+		return super.visitPrimitive(t, p);
 	}
 
 	@Override
 	public Attribute visitArray(ArrayType t, MetafyClassContext p) {
-		return new ArrayAttribute(t, p.getActualElement());
+		if (!p.getActualElement().getModifiers().contains(Modifier.STATIC)) {
+			return new ArrayAttribute(t, p.getActualElement());
+		}
+		return super.visitArray(t, p);
 	}
 
 	@Override
 	public Attribute visitDeclared(DeclaredType t, MetafyClassContext p) {
-		if(this.isList(t.toString())) {
-			return new ListAttribute(t, p.getActualElement());
-		} else if (this.isMap(t.toString())) {
-			// not implemented
-		} else if (this.isSet(t.toString())) {
-			return new SetAttribute(t, p.getActualElement());
-		} else if (t.asElement().getAnnotation(Metafy.class) != null) {
+		if (t.asElement().getAnnotation(Metafy.class) != null) {
 			return new MetaReferenceAttribute(t, p, p.getActualElement());
-		} else {
-			return new SimpleAttribute(t, p.getActualElement());
+		} else if (!p.getActualElement().getModifiers().contains(Modifier.STATIC)) {
+			if(this.isList(t.toString())) {
+				return new ListAttribute(t, p.getActualElement());
+			} else if (this.isMap(t.toString())) {
+				// not implemented
+			} else if (this.isSet(t.toString())) {
+				return new SetAttribute(t, p.getActualElement());
+			} else {
+				return new SimpleAttribute(t, p.getActualElement());
+			}
 		}
 		return super.visitDeclared(t, p);
 	}
@@ -58,7 +67,6 @@ public class AttributeVisitor extends SimpleTypeVisitor6<Attribute, MetafyClassC
 		if (typeMirror != null) {
 			return new SimpleAttribute((DeclaredType) typeMirror, p.getActualElement());
 		}
-
 		return super.visitTypeVariable(t, p);
 	}
 

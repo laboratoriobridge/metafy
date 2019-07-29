@@ -6,5 +6,10 @@
 **/.factorypath
 **/.springBeans
 
+# Webstorm / IntelliJ
+.idea
+*.iml
+out/
+
 target/
 /target/

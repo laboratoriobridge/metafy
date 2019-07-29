@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.VariableElement;
 
+import br.ufsc.bridge.metafy.MetaField;
 import br.ufsc.bridge.metafy.processor.clazz.MetafyClass;
 
 public class PrimitiveAttribute implements Attribute {
@@ -49,7 +50,7 @@ public class PrimitiveAttribute implements Attribute {
 
 	@Override
 	public void importTypes(MetafyClass metaClass) {
-		// nothing to import
+		metaClass.importType(MetaField.class.getName());
 	}
 
 
