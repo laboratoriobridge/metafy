@@ -24,6 +24,6 @@ jobs:
     - name: Test
       run: mvn test --file pom.xml
     - name: Upload coverage to Codecov
-      uses: actions/codecov-action@v1.0.0
+      uses: codecov/codecov-action@v1.0.0
       with:
         token: ${{secrets.CODECOV_TOKEN}}
