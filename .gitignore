@@ -13,3 +13,8 @@ out/
 
 target/
 /target/
+
+# Gradle
+.gradle/
+gradle/
+build/
