@@ -1,7 +1,16 @@
-plugins {
-    id 'java'
-    id 'maven-publish'
-    id 'jacoco'
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: 'jacoco'
+apply plugin: 'signing'
+
+group = 'br.ufsc.bridge'
+version = '0.2.1-SNAPSHOT'
+description = 'br.ufsc.bridge:metafy'
+sourceCompatibility = '1.8'
+
+dependencies {
+    testCompile 'com.google.testing.compile:compile-testing:0.13'
+    testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
 }
 
 jacocoTestReport {
@@ -18,16 +27,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testCompile 'com.google.testing.compile:compile-testing:0.13'
-    testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
-}
-
-group = 'br.ufsc.bridge'
-version = '0.2.1-SNAPSHOT'
-description = 'br.ufsc.bridge:metafy'
-sourceCompatibility = '1.8'
-
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from(sourceSets.main.allJava)
@@ -39,11 +38,54 @@ task javadocJar(type: Jar) {
 }
 
 publishing {
-    publications {
-        maven(MavenPublication) {
-            from(components.java)
-            artifact(sourcesJar)
-            artifact(javadocJar)
+    repositories {
+        maven {
+            
+            def releasesRepoUrl = "https://repositorio.bridge.ufsc.br/repository/snapshots/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
         }
     }
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'Metafy'
+                description = 'Generate meta information for Java objects'
+                url = 'https://github.com/laboratoriobridge/metafy'
+                licenses {
+                    license {
+                        name = 'MIT Licence'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'laboratoriobridge'
+                        name = 'Laboratório Bridge'
+                        email = 'maven@bridge.ufsc.br'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git@github.com:laboratoriobridge/metafy.git'
+                    developerConnection = 'scm:git:git@github.com:laboratoriobridge/metafy.git'
+                    url = 'scm:git:git@github.com:laboratoriobridge/metafy.git'
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
