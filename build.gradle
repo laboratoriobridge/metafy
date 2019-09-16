@@ -40,10 +40,19 @@ task javadocJar(type: Jar) {
 publishing {
     repositories {
         maven {
-            
-            def releasesRepoUrl = "https://repositorio.bridge.ufsc.br/repository/snapshots/"
-            def snapshotsRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            if (version.endsWith('SNAPSHOT')) {
+                url = "https://repositorio.bridge.ufsc.br/repository/snapshots/"
+                credentials {
+                    username = getProperty('repoBridge.username')
+                    password = getProperty('repoBridge.password')
+                }
+            } else {
+                url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                credentials {
+                    username = getProperty('ossrh.username')
+                    password = getProperty('ossrh.password')
+                }
+            }
         }
     }
     publications {
