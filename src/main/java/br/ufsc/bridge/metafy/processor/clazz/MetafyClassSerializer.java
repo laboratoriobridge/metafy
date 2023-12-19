@@ -1,5 +1,6 @@
 package br.ufsc.bridge.metafy.processor.clazz;
 
+import jakarta.annotation.Generated;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -7,7 +8,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import javax.annotation.Generated;
 import javax.annotation.processing.ProcessingEnvironment;
 
 import br.ufsc.bridge.metafy.processor.MetafyProcessor;

@@ -37,7 +37,7 @@ public class PrimitiveTypesTest {
 					"import br.ufsc.bridge.metafy.MetaBean;",
 					"import br.ufsc.bridge.metafy.MetaField;",
 					"import br.ufsc.bridge.metafy.test.TestDto;",
-					"import javax.annotation.Generated;",
+					"import jakarta.annotation.Generated;",
 					"",
 					"@Generated(\"br.ufsc.bridge.metafy.processor.MetafyProcessor\")",
 					"public class MTestDto extends MetaBean<TestDto> {",

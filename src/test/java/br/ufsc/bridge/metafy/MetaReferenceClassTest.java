@@ -50,7 +50,7 @@ public class MetaReferenceClassTest {
 					"import br.ufsc.bridge.metafy.MetaBean;",
 					"import br.ufsc.bridge.metafy.test.MTest2Dto;",
 					"import br.ufsc.bridge.metafy.test.Test1Dto;",
-					"import javax.annotation.Generated;",
+					"import jakarta.annotation.Generated;",
 					"",
 					"@Generated(\"br.ufsc.bridge.metafy.processor.MetafyProcessor\")",
 					"public class MTest1Dto extends MetaBean<Test1Dto> {",
