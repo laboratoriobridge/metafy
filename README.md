@@ -1,7 +1,4 @@
-[![Build Status](https://travis-ci.org/laboratoriobridge/metafy.svg?branch=master)](https://travis-ci.org/laboratoriobridge/metafy)
-[![codecov](https://codecov.io/gh/laboratoriobridge/metafy/branch/master/graph/badge.svg)](https://codecov.io/gh/laboratoriobridge/metafy)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/br.ufsc.bridge/metafy/badge.svg)](https://maven-badges.herokuapp.com/maven-central/br.ufsc.bridge/metafy)
-
 
 # Metafy
 
@@ -34,7 +31,6 @@ public class MAuthorDto extends MetaBean<AuthorDto> {
 	public final MetaField<Long> id = createField(Long.class, "id");
 	public final MetaField<String> name = createField(String.class, "name");
 
-
 	public MAuthorDto() {
 		super(AuthorDto.class);
 	}
@@ -52,10 +48,9 @@ public class MAuthorDto extends MetaBean<AuthorDto> {
 
 To be used as:
 
-
 ```java
-MAuthorDto meta = MAuthorDto.meta;
+MAuthorDto meta=MAuthorDto.meta;
 
-meta.id; // meta information about id attribute
-meta.name; // meta information about name attribute
+		meta.id; // meta information about id attribute
+		meta.name; // meta information about name attribute
 ```
