@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import javax.annotation.processing.ProcessingEnvironment;
 
 import br.ufsc.bridge.metafy.processor.MetafyProcessor;
